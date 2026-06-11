@@ -7,30 +7,30 @@
     <meta name="description" content="geoMaster - A time-based geography quiz game testing your knowledge of countries, flags, capitals, and world facts" />
     <title>geoMaster - Prove Your Worldly Knowledge</title>
     <link rel="stylesheet" href="styles.css" />
-   
-    <script>
-  (function(apiKey) {
-    (function(p,e,n,d,o){var v,w,x,y,z;o=p[d]=p[d]||{};o._q=o._q||[];
-    v=['initialize','identify','updateOptions','pageLoad','track'];for(w=0,x=v.length;w<x;++w)(function(m){
-      o[m]=o[m]||function(){o._q[m===v[0]?'unshift':'push']([m].concat([].slice.call(arguments,0)));};})(v[w]);
-    y=e.createElement(n);y.async=!0;y.src='https://cdn.pendo.io/agent/static/'+apiKey+'/pendo.js';
-    z=e.getElementsByTagName(n)[0];z.parentNode.insertBefore(y,z);})(window,document,'script','pendo');
-  })('a94918df-171d-4819-8dcd-ded7a810cb4b');
-
-  (function() {
-    var visitorId = localStorage.getItem('gm_visitor_id');
-    if (!visitorId) {
-      visitorId = 'anon-' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('gm_visitor_id', visitorId);
-    }
-    pendo.initialize({
-      visitor: { id: visitorId },
-      account: { id: 'geoMaster' }
-    });
-  })();
-</script>
-
      <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+          <script>
+        (function(apiKey) {
+          (function(p,e,n,d,o){var v,w,x,y,z;o=p[d]=p[d]||{};o._q=o._q||[];
+          v=['initialize','identify','updateOptions','pageLoad','track'];for(w=0,x=v.length;w<x;++w)(function(m){
+            o[m]=o[m]||function(){o._q[m===v[0]?'unshift':'push']([m].concat([].slice.call(arguments,0)));};})(v[w]);
+          y=e.createElement(n);y.async=!0;y.src='https://cdn.pendo.io/agent/static/'+apiKey+'/pendo.js';
+          z=e.getElementsByTagName(n)[0];z.parentNode.insertBefore(y,z);})(window,document,'script','pendo');
+        })('a94918df-171d-4819-8dcd-ded7a810cb4b');
+      
+        (function() {
+          var visitorId = localStorage.getItem('gm_visitor_id');
+          if (!visitorId) {
+            visitorId = 'anon-' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('gm_visitor_id', visitorId);
+          }
+          pendo.initialize({
+            visitor: { id: visitorId },
+            account: { id: 'geoMaster' }
+          });
+        })();
+      </script>
+
+     
     
   </head>
 
@@ -133,12 +133,12 @@
           <p class="font-pixel text-dark text-xs font-bold">New Personal Best!</p>
         </div>
         <div class="flex gap-4">
-          <div id="results-view" class="view hidden pixel-card text-center">
+          <!-- <div id="results-view" class="view hidden pixel-card text-center"> -->
             <div class="flex flex-row justify-center gap-4 w-full" style="margin-top: 1.5rem;">
               <button onclick="Game.start(Game.state.mode)" class="pixel-button bg-success font-pixel min-w-[120px]">Play Again</button>
               <button onclick="UI.showView('main-menu')" class="pixel-button bg-primary font-pixel min-w-[120px]">Main Menu</button>
             </div>
-        </div>
+        <!-- </div> -->
         </div>
       </div>
     </div>
