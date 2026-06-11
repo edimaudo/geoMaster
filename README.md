@@ -1,4 +1,4 @@
-# geoMaster | Master your worldly Knowledge
+# geoMaster | Prove your worldly Knowledge
 
 A retro pixel art geography quiz game with 4 game modes.
 
