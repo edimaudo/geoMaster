@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
+    <meta name="description" content="geoMaster - A time-based geography quiz game testing your knowledge of countries, flags, capitals, and world facts" />
+    <title>geoMaster - Prove Your Worldly Knowledge</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link font-pixel">Skip to main content</a>
+
+    <header class="top-nav" aria-label="Application Settings">
+      <button id="text-size-toggle" class="nav-btn font-pixel" aria-label="Toggle text size">Text Size: Standard</button>
+      <button id="theme-toggle" class="nav-btn font-pixel" aria-label="Toggle display theme">Theme: Dark</button>
+      <button id="sound-toggle" class="nav-btn font-pixel" aria-label="Toggle sound effects">Sound: On</button>
+    </header>
+
+    <div class="container" id="main-content">
+      
+      <div id="main-menu" class="view active">
+        <h1 class="title font-pixel text-center">geoMaster</h1>
+        
+        <div class="grid" role="group" aria-label="Game Modes">
+          <button onclick="Game.start('country')" class="pixel-button bg-primary">
+            <span class="block text-sm">Country Mode</span>
+            <span class="block text-sub">Name to Flag</span>
+          </button>
+          <button onclick="Game.start('flag')" class="pixel-button bg-success">
+            <span class="block text-sm">Flag Mode</span>
+            <span class="block text-sub">Flag to Name</span>
+          </button>
+          <button onclick="Game.start('capital')" class="pixel-button bg-primary">
+            <span class="block text-sm">Capital Mode</span>
+            <span class="block text-sub">Capital to Flag</span>
+          </button>
+          <button onclick="Game.start('guesser')" class="pixel-button bg-success">
+            <span class="block text-sm">Guesser Mode</span>
+            <span class="block text-sub">Facts to Name</span>
+          </button>
+        </div>
+
+        <div class="pixel-card text-center" style="margin-top: 2rem;">
+          <h2 class="font-pixel text-sm text-muted">Personal Best Times</h2>
+          <div id="menu-best-times" class="leaderboard-grid font-pixel" style="margin-top: 1rem;"></div>
+        </div>
+
+        <div class="flex justify-center gap-4" style="margin-top: 1.5rem;">
+          <button onclick="UI.showView('settings-view')" class="btn-text font-pixel">Settings</button>
+          <button onclick="UI.showView('about-view')" class="btn-text font-pixel">About</button>
+        </div>
+      </div>
+
+      <div id="settings-view" class="view hidden pixel-card">
+        <h2 class="font-pixel text-center text-accent">Settings & Records</h2>
+        
+        <div id="local-leaderboard" class="leaderboard-grid font-pixel" style="margin-top: 2rem;" aria-label="Personal best times"></div>
+        
+        <div id="clear-prompt-default" style="margin-top: 2rem;">
+          <button onclick="UI.toggleClear(true)" class="pixel-button bg-error w-full">Clear All Scores</button>
+        </div>
+        <div id="clear-prompt-confirm" class="hidden text-center space-y-2" style="margin-top: 2rem;">
+          <p class="font-pixel text-error text-xs">Are you sure? This cannot be undone.</p>
+          <div class="flex gap-4">
+            <button onclick="Game.clearScores()" class="pixel-button bg-error flex-1">Yes, Clear</button>
+            <button onclick="UI.toggleClear(false)" class="pixel-button bg-primary flex-1">Cancel</button>
+          </div>
+        </div>
+
+        <button onclick="UI.showView('main-menu')" class="pixel-button bg-primary w-full font-pixel" style="margin-top: 1.5rem;">Back to Menu</button>
+      </div>
+
+      <div id="about-view" class="view hidden pixel-card">
+        <h2 class="font-pixel text-center text-accent">About geoMaster</h2>
+        <div class="font-pixel text-muted text-xs leading-relaxed space-y-4" style="margin-top: 1.5rem;">
+          <p>geoMaster is a time-based geography quiz game featuring four modes that test your knowledge of countries, flags, capitals, and facts.</p>
+          <p>Compete against the clock to achieve the lowest completion time. Each session contains 7 questions. Incorrect answers instantly add a 60-second penalty to your time.</p>
+        </div>
+        <button onclick="UI.showView('main-menu')" class="pixel-button bg-primary w-full font-pixel" style="margin-top: 2rem;">Back to Menu</button>
+      </div>
+
+      <div id="game-view" class="view hidden">
+        <div class="flex justify-between font-pixel text-sm">
+          <span id="question-counter" aria-live="polite">Question: 1/7</span>
+          <span id="timer-display" class="text-error" aria-live="off">Time: 0s</span>
+        </div>
+        
+        <div id="question-area" class="pixel-card text-center font-pixel font-bold text-md" style="margin: 1.5rem 0;"></div>
+        
+        <div id="options-grid" class="grid" role="group" aria-label="Answer options"></div>
+        
+        <div id="visual-feedback-card" class="text-center hidden" style="margin-top: 1.5rem;" role="status" aria-live="assertive">
+          <p id="visual-feedback-text" class="font-pixel font-bold text-md"></p>
+        </div>
+
+        <button onclick="Game.quit()" class="pixel-button bg-secondary w-full font-pixel" style="margin-top: 2.5rem;">Quit Game</button>
+      </div>
+
+      <div id="results-view" class="view hidden pixel-card text-center">
+        <h2 class="font-pixel text-accent">Session Complete</h2>
+        <div style="margin: 2rem 0;">
+          <p class="font-pixel text-muted text-xs">FINAL TIME (INCLUDES PENALTIES)</p>
+          <p id="final-time" class="font-pixel text-xl text-primary" style="margin: 1rem 0;"></p>
+        </div>
+        <div id="new-record-badge" class="hidden visual-badge bg-warning border-warning" style="margin-bottom: 2rem;" role="status">
+          <p class="font-pixel text-dark text-xs font-bold">New Personal Best!</p>
+        </div>
+        <div class="flex gap-4">
+          <button onclick="Game.start(Game.state.mode)" class="pixel-button bg-success flex-1 font-pixel">Play Again</button>
+          <button onclick="UI.showView('main-menu')" class="pixel-button bg-primary flex-1 font-pixel">Main Menu</button>
+        </div>
+      </div>
+
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
