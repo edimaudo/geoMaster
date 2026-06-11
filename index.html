@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
-  <script>
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
+    <meta name="description" content="geoMaster - A time-based geography quiz game testing your knowledge of countries, flags, capitals, and world facts" />
+    <title>geoMaster - Prove Your Worldly Knowledge</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+      <script>
   (function(apiKey) {
     (function(p,e,n,d,o){var v,w,x,y,z;o=p[d]=p[d]||{};o._q=o._q||[];
     v=['initialize','identify','updateOptions','pageLoad','track'];for(w=0,x=v.length;w<x;++w)(function(m){
@@ -21,13 +29,6 @@
     });
   })();
 </script>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
-    <meta name="description" content="geoMaster - A time-based geography quiz game testing your knowledge of countries, flags, capitals, and world facts" />
-    <title>geoMaster - Prove Your Worldly Knowledge</title>
-    <link rel="stylesheet" href="styles.css" />
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   </head>
 
   <body>
@@ -129,11 +130,14 @@
           <p class="font-pixel text-dark text-xs font-bold">New Personal Best!</p>
         </div>
         <div class="flex gap-4">
-          <button onclick="Game.start(Game.state.mode)" class="pixel-button bg-success flex-1 font-pixel">Play Again</button>
-          <button onclick="UI.showView('main-menu')" class="pixel-button bg-primary flex-1 font-pixel">Main Menu</button>
+          <div id="results-view" class="view hidden pixel-card text-center">
+            <div class="flex flex-row justify-center gap-4 w-full" style="margin-top: 1.5rem;">
+              <button onclick="Game.start(Game.state.mode)" class="pixel-button bg-success font-pixel min-w-[120px]">Play Again</button>
+              <button onclick="UI.showView('main-menu')" class="pixel-button bg-primary font-pixel min-w-[120px]">Main Menu</button>
+            </div>
+        </div>
         </div>
       </div>
-
     </div>
 
     <script src="app.js"></script>
