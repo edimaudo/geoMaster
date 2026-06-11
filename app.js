@@ -228,13 +228,19 @@ const Game = {
       data.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'flag-btn';
-        btn.innerHTML = `<img src="https://flagcdn.com/w256/${opt.code}.png" alt="Flag option" loading="lazy" />`;
+        btn.innerHTML = `<img src="https://flagcdn.com/w320/${opt.code.toLowerCase()}.png" 
+                      alt="Flag of ${opt.name}" 
+                      loading="lazy" 
+                      onerror="this.style.display='none'; console.error('Failed to load flag: ${opt.code}')" />`;
         btn.onclick = () => this.handleAnswer(opt.code === data.correct.code, btn, data.correct.code);
         btn.dataset.code = opt.code;
         optionsGrid.appendChild(btn);
       });
     } else if (this.state.mode === 'flag') {
-      promptArea.innerHTML = `<img src="https://flagcdn.com/w256/${data.correct.code}.png" alt="Country flag" style="width: 200px; border: 4px solid var(--pixel-border); margin: 0 auto;" />`;
+      // Ensure this structure is used in your prompt area or options rendering
+      const flagUrl = `https://flagcdn.com/w320/${data.correct.code.toLowerCase()}.png`;
+      // If injecting into the DOM:
+      promptArea.innerHTML = `<img src="${flagUrl}" alt="Country flag" style="width: 200px; display: block; margin: 0 auto;" />`;
       data.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'pixel-button bg-primary';
@@ -248,7 +254,7 @@ const Game = {
       data.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'flag-btn';
-        btn.innerHTML = `<img src="https://flagcdn.com/w256/${opt.code}.png" alt="Flag option" loading="lazy" />`;
+        btn.innerHTML = `<img src="https://flagcdn.com/w320/${opt.code}.png" alt="Flag option" loading="lazy" />`;
         btn.onclick = () => this.handleAnswer(opt.code === data.correct.code, btn, data.correct.code);
         btn.dataset.code = opt.code;
         optionsGrid.appendChild(btn);
