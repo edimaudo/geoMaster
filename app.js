@@ -135,23 +135,41 @@ const UI = {
     
     document.getElementById('theme-toggle').onclick = () => {
       AudioSys.play('click');
+      const previousTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
       const isDark = document.documentElement.classList.toggle('dark');
       const themeName = isDark ? 'Dark' : 'Light';
       localStorage.setItem('geomaster_theme', themeName.toLowerCase());
       document.getElementById('theme-toggle').innerText = `Theme: ${themeName}`;
+      pendo.track("preference_changed", {
+        preferenceName: "theme",
+        newValue: themeName.toLowerCase(),
+        previousValue: previousTheme
+      });
     };
 
     document.getElementById('text-size-toggle').onclick = () => {
       AudioSys.play('click');
+      const previousSize = this.isLargeText ? 'large' : 'standard';
       this.isLargeText = !this.isLargeText;
       document.documentElement.style.setProperty('--font-scale-base', this.isLargeText ? '18px' : '16px');
       document.getElementById('text-size-toggle').innerText = `Text Size: ${this.isLargeText ? 'Large' : 'Standard'}`;
+      pendo.track("preference_changed", {
+        preferenceName: "text_size",
+        newValue: this.isLargeText ? "large" : "standard",
+        previousValue: previousSize
+      });
     };
 
     document.getElementById('sound-toggle').innerText = `Sound: ${AudioSys.enabled ? 'On' : 'Off'}`;
     document.getElementById('sound-toggle').onclick = () => {
+      const previousSound = AudioSys.enabled ? 'on' : 'off';
       AudioSys.toggle();
       AudioSys.play('click');
+      pendo.track("preference_changed", {
+        preferenceName: "sound",
+        newValue: AudioSys.enabled ? "on" : "off",
+        previousValue: previousSound
+      });
     };
 
     Game.updateBestTimes();
@@ -197,6 +215,11 @@ const Game = {
     this.state.questions = shuffled.slice(0, 7).map(correct => {
       const wrongs = shuffled.filter(c => c.code !== correct.code).slice(0, 3);
       return { correct, options: [correct, ...wrongs].sort(() => 0.5 - Math.random()) };
+    });
+
+    pendo.track("game_started", {
+      mode: mode,
+      totalQuestions: 7
     });
 
     UI.showView('game-view');
@@ -309,6 +332,16 @@ const Game = {
       if (correctBtn) correctBtn.classList.add('correct-variant');
     }
 
+    const currentQuestion = this.state.questions[this.state.currentIndex];
+    pendo.track("question_answered", {
+      mode: this.state.mode,
+      questionNumber: this.state.currentIndex + 1,
+      isCorrect: isCorrect,
+      penaltySeconds: isCorrect ? 0 : 60,
+      correctCountryCode: correctCode,
+      correctCountryName: currentQuestion.correct.name
+    });
+
     setTimeout(() => {
       feedbackCard.classList.add('hidden');
       this.state.currentIndex++;
@@ -335,6 +368,13 @@ const Game = {
     document.getElementById('new-record-badge').classList.toggle('hidden', !isNewRecord);
 
     if (isNewRecord) {
+      pendo.track("new_record_achieved", {
+        mode: this.state.mode,
+        newRecordTimeSeconds: finalTime,
+        previousBestTimeSeconds: best ? parseInt(best) : null,
+        isFirstRecord: !best
+      });
+
       localStorage.setItem(key, finalTime);
       AudioSys.play('victory');
       if (window.confetti) {
@@ -347,6 +387,14 @@ const Game = {
         }());
       }
     }
+
+    pendo.track("game_completed", {
+      mode: this.state.mode,
+      finalTimeSeconds: finalTime,
+      elapsedTimeSeconds: elapsed,
+      totalPenaltySeconds: this.state.penalties,
+      isNewRecord: isNewRecord
+    });
 
     UI.showView('results-view');
   },
@@ -369,9 +417,25 @@ const Game = {
   },
 
   clearScores() {
-    ['country', 'flag', 'capital', 'guesser'].forEach(mode => {
+    const modes = ['country', 'flag', 'capital', 'guesser'];
+    const previousBestCountry = localStorage.getItem('geomaster_country');
+    const previousBestFlag = localStorage.getItem('geomaster_flag');
+    const previousBestCapital = localStorage.getItem('geomaster_capital');
+    const previousBestGuesser = localStorage.getItem('geomaster_guesser');
+    const modesWithScores = modes.filter(m => localStorage.getItem(`geomaster_${m}`)).length;
+
+    modes.forEach(mode => {
       localStorage.removeItem(`geomaster_${mode}`);
     });
+
+    pendo.track("scores_cleared", {
+      previousBestCountry: previousBestCountry ? parseInt(previousBestCountry) : null,
+      previousBestFlag: previousBestFlag ? parseInt(previousBestFlag) : null,
+      previousBestCapital: previousBestCapital ? parseInt(previousBestCapital) : null,
+      previousBestGuesser: previousBestGuesser ? parseInt(previousBestGuesser) : null,
+      modesWithScores: modesWithScores
+    });
+
     AudioSys.play('click');
     this.updateBestTimes();
     UI.toggleClear(false);
@@ -379,6 +443,14 @@ const Game = {
 
   quit() {
     clearInterval(this.state.timerInterval);
+    const elapsed = Math.floor((Date.now() - this.state.startTime) / 1000);
+    pendo.track("game_quit", {
+      mode: this.state.mode,
+      questionsCompleted: this.state.currentIndex,
+      totalQuestions: 7,
+      elapsedTimeSeconds: elapsed,
+      totalPenaltySeconds: this.state.penalties
+    });
     AudioSys.play('click');
     UI.showView('main-menu');
   }
